@@ -40,3 +40,11 @@ def criar_professor(request):
             "id": professor.id
         })
     return JsonResponse({"erro": "Método não permitido"}, status=405)
+
+@csrf_exempt
+def deletar_professor(request, id):
+    if request.method == "DELETE":
+        sucesso = repo.deletar(id)
+        if sucesso:
+            return JsonResponse({"mensagem": "Professor Deletado!"})
+        return JsonResponse({"erro": "Professor não encontrado"}, status=404)
