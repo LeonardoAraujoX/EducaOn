@@ -1,0 +1,8 @@
+from django.urls import path
+from core.controllers import aluno_controller
+
+urlpatterns = [
+    path('alunos/', aluno_controller.listar_alunos),
+    path('alunos/criar/', aluno_controller.criar_aluno),
+    path('alunos/atualizar',aluno_controller.atualizar_aluno)
+]
