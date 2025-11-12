@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 
 class Professor(models.Model):
@@ -10,3 +11,95 @@ class Professor(models.Model):
 
     def __str__(self):
         return f"Prof. {self.nome} - {self.especialidade}"
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+class Agendamento(models.Model):
+    # Choices para status do agendamento
+    STATUS_CHOICES = [
+        ('agendado', 'Agendado'),
+        ('confirmado', 'Confirmado'),
+        ('cancelado', 'Cancelado'),
+        ('realizado', 'Realizado'),
+    ]
+
+    professor = models.ForeignKey(
+        'Professor',
+        on_delete=models.CASCADE,
+        related_name='agendamentos'
+    )
+
+    aluno = models.ForeignKey(
+        'Aluno',
+        on_delete=models.CASCADE,
+        related_name='agendamentos'
+    )
+    
+    data_agendamento = models.DateTimeField()
+    duracao_minutos = models.IntegerField(
+        default=60,
+        validators=[MinValueValidator(30), MaxValueValidator(240)]
+    )
+
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='agendado'
+    )
+    descricao = models.TextField(blank=True, null=True)
+    data_criacao = models.DateTimeField(auto_now_add=True)
+    data_atualizacao = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'agendamentos'
+        verbose_name = 'Agendamento'
+        verbose_name_plural = 'Agendamentos'
+        ordering = ['data_agendamento']
+    
+    def __str__(self):
+        return f"{self.aluno.nome} com {self.professor.nome} - {self.data_agendamento.strftime('%d/%m/%Y %H:%M')}"
