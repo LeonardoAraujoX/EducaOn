@@ -9,6 +9,13 @@ class Professor(models.Model):
     ativo = models.BooleanField(default=True)
     data_criacao = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        db_table = 'professores'                    # Nome da tabela no banco
+        verbose_name = 'Professor'                  # Nome singular no Admin
+        verbose_name_plural = 'Professores'         # Nome plural no Admin
+        ordering = ['nome']                         # Ordena por nome A-Z
+
+
     def __str__(self):
         return f"Prof. {self.nome} - {self.especialidade}"
     
