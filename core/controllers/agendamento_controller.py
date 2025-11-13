@@ -93,8 +93,7 @@ def criar_agendamento(request):
             aluno_id=aluno_id,
             servico_id=servico_id,
             data_agendamento=data_agendamento,
-            duracao_minutos=duracao_minutos,
-            descricao=request.POST.get("descricao", "")
+            duracao_minutos=duracao_minutos
         )
         return JsonResponse({
             "mensagem": "Agendamento criado com sucesso!",

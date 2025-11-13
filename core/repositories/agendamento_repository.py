@@ -40,8 +40,7 @@ class AgendamentoRepository:
             aluno_id=aluno_id,
             servico_id=servico_id,
             data_agendamento=data_agendamento,
-            duracao_minutos=duracao_minutos,
-            descricao=descricao
+            duracao_minutos=duracao_minutos
     )
     
     def atualizar_status(self, id, novo_status):
