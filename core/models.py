@@ -50,7 +50,13 @@ class Agendamento(models.Model):
         choices=STATUS_CHOICES,
         default='agendado'
     )
-    descricao = models.TextField(blank=True, null=True)
+    
+    servico = models.ForeignKey(
+        'Servico',
+        on_delete=models.CASCADE,
+        related_name='servico'
+    )
+
     data_criacao = models.DateTimeField(auto_now_add=True)
     data_atualizacao = models.DateTimeField(auto_now=True)
 
