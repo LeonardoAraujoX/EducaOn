@@ -78,6 +78,8 @@ def buscar_agendamento(request, id):
 def criar_agendamento(request):
     if request.method == "POST":
         professor_id = request.POST.get("professor_id")
+        aluno_id = request.POST.get("aluno_id")
+        servico_id = request.POST.get("servico_id") 
         data_agendamento_str = request.POST.get("data_agendamento")
         duracao_minutos = int(request.POST.get("duracao_minutos", 60))
         
@@ -88,7 +90,8 @@ def criar_agendamento(request):
         
         agendamento = repo.criar(
             professor_id=professor_id,
-            aluno_id=request.POST.get("aluno_id"),
+            aluno_id=aluno_id,
+            servico_id=servico_id,
             data_agendamento=data_agendamento,
             duracao_minutos=duracao_minutos,
             descricao=request.POST.get("descricao", "")

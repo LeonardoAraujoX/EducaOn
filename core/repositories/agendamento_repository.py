@@ -34,14 +34,15 @@ class AgendamentoRepository:
         except ObjectDoesNotExist:
             return None
     
-    def criar(self, professor_id, aluno_id, data_agendamento, duracao_minutos=60, descricao=""):
+    def criar(self, professor_id, aluno_id, servico_id, data_agendamento, duracao_minutos=60, descricao=""):
         return Agendamento.objects.create(
             professor_id=professor_id,
             aluno_id=aluno_id,
+            servico_id=servico_id,
             data_agendamento=data_agendamento,
             duracao_minutos=duracao_minutos,
             descricao=descricao
-        )
+    )
     
     def atualizar_status(self, id, novo_status):
         agendamento = self.buscar_por_id(id)
