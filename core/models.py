@@ -54,7 +54,7 @@ class Agendamento(models.Model):
     servico = models.ForeignKey(
         'Servico',
         on_delete=models.CASCADE,
-        related_name='agendamentos'
+        related_name='agendamentos'  
     )
 
     data_criacao = models.DateTimeField(auto_now_add=True)
