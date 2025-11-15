@@ -29,18 +29,9 @@ def buscar_professor(request, id):
 
 @csrf_exempt
 def criar_professor(request):
-    if request.method == "POST":
-        professor = repo.criar(
-            nome=request.POST.get("nome"),
-            email=request.POST.get("email"),
-            especialidade=request.POST.get("especialidade")
-        )
-        return JsonResponse({
-            "mensagem": "Professor criado com sucesso!",
-            "id": professor.id
-        })
-    return JsonResponse({"erro": "Método não permitido"}, status=405)
-
+    if request.method == 'POST':
+        try:
+            professor = professor_repository
 @csrf_exempt
 def deletar_professor(request, id):
     if request.method == "DELETE":
