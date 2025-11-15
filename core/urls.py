@@ -3,9 +3,19 @@ from .controllers import professor_controller
 from .controllers import aluno_controller
 from .controllers import agendamento_controller
 from core.controllers import servico_controller
+from core.controllers.auth_controller import AuthController
+from rest_framework.decorators import api_view
+
+
+@api_view(['POST'])
+def login_view(request):
+    return AuthController().post(request)
 
 
 urlpatterns = [
+    path('auth/login/', login_view, name='login'),
+
+    
     path('professores/', professor_controller.listar_professores),  # GET
     path('professores/criar/', professor_controller.criar_professor),  # POST
     path('professores/<int:id>/', professor_controller.buscar_professor),  # GET
