@@ -1,4 +1,5 @@
 from django.core.exceptions import ObjectDoesNotExist
+from ..forms.aluno_form import AlunoForm
 from ..models import Aluno
 
 
@@ -18,9 +19,21 @@ class AlunoRepository:
 
     @staticmethod
     def criar_aluno(nome, email, numero):
-        aluno = Aluno(nome=nome, email=email, numero=numero)
-        aluno.save()
-        return aluno
+        form = AlunoForm(data={
+            'nome': nome,
+            'email': email,
+            'numero': numero
+        }) 
+
+        if form.is_valid():
+            aluno = form.save()
+            return aluno
+        else:
+            errors = " | ".join([
+                f"{field}: {', '.join(errors)}"
+                for field, erros in form.errors.items()
+            ])
+            raise ValueError(errors)
 
     @staticmethod
     def atualizar_aluno(id, nome=None, email=None, numero=None):
