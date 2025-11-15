@@ -35,7 +35,6 @@ def listar_agendamentos_professor(request, professor_id):
         "data_agendamento": a.data_agendamento,
         "duracao_minutos": a.duracao_minutos,
         "status": a.status,
-        "descricao": a.descricao
     } for a in agendamentos]
     return JsonResponse({"agendamentos": dados})
 
@@ -46,8 +45,7 @@ def listar_agendamentos_aluno(request, aluno_id):
         "professor": a.professor.nome,
         "data_agendamento": a.data_agendamento,
         "duracao_minutos": a.duracao_minutos,
-        "status": a.status,
-        "descricao": a.descricao
+        "status": a.status
     } for a in agendamentos]
     return JsonResponse({"agendamentos": dados})
 
@@ -90,8 +88,7 @@ def buscar_agendamento(request, id):
             },
             "data_agendamento": agendamento.data_agendamento,
             "duracao_minutos": agendamento.duracao_minutos,
-            "status": agendamento.status,
-            "descricao": agendamento.descricao
+            "status": agendamento.status
         })
     return JsonResponse({"erro": "Agendamento não encontrado"}, status=404)
 
@@ -103,8 +100,18 @@ def criar_agendamento(request):
         servico_id = request.POST.get("servico_id") 
         data_agendamento_str = request.POST.get("data_agendamento")
         duracao_minutos = int(request.POST.get("duracao_minutos", 60))
-        
+               
         data_agendamento = datetime.fromisoformat(data_agendamento_str.replace('Z', '+00:00'))
+
+        if data_agendamento < datetime.now(data_agendamento.tzinfo):
+            return JsonResponse({"erro": "Não é possível agendar para uma data passada"}, status=400)
+        
+        hora = data_agendamento.hour
+        if hora < 8 or hora > 22:
+            return JsonResponse({"erro": "Agendamentos só podem ser feitos entre 08:00 e 22:00"}, status=400)
+        
+        if professor_id == aluno_id:
+            return JsonResponse({"erro": "O professor não pode ser o próprio aluno"}, status=400)
         
         if repo.verificar_conflito(professor_id, data_agendamento, duracao_minutos):
             return JsonResponse({"erro": "Conflito de horário com outro agendamento"}, status=400)
