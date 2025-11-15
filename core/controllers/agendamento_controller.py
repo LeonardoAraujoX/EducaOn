@@ -3,8 +3,29 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
 from datetime import datetime
 from core.repositories.agendamento_repository import AgendamentoRepository
+import os
+import requests
 
 repo = AgendamentoRepository()
+
+
+def gerar_sala_meet():
+    DAILY_API_KEY = os.getenv("DAILY_API_KEY")
+    
+    url = "https://api.daily.co/v1/rooms"
+    headers = {
+        "Authorization": f"Bearer {DAILY_API_KEY}",
+        "Content-Type": "application/json"
+    }
+
+    response = requests.post(url, json={"privacy": "public"}, headers=headers)
+
+    if response.status_code != 200:
+        return None  
+
+    data = response.json()
+    return data["url"]
+
 
 def listar_agendamentos_professor(request, professor_id):
     agendamentos = repo.listar_ativos_por_professor(professor_id)
@@ -95,9 +116,13 @@ def criar_agendamento(request):
             data_agendamento=data_agendamento,
             duracao_minutos=duracao_minutos
         )
+
+        meeting_url = gerar_sala_meet()
+        
         return JsonResponse({
             "mensagem": "Agendamento criado com sucesso!",
-            "id": agendamento.id
+            "id": agendamento.id,
+            "meeting_url": meeting_url
         })
     return JsonResponse({"erro": "Método não permitido"}, status=405)
 
@@ -118,3 +143,4 @@ def deletar_agendamento(request, id):
         if sucesso:
             return JsonResponse({"mensagem": "Agendamento deletado!"})
         return JsonResponse({"erro": "Agendamento não encontrado"}, status=404)
+    
