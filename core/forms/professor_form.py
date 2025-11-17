@@ -37,16 +37,24 @@ class ProfessorForm(forms.ModelForm):
         return nome.strip()
     
     def clean_email(self):
-        email = self.cleaned_data['email']
+        email = self.cleaned_data['email'].strip()
+
+        if '@' not in email or '.' not in email:
+            raise forms.ValidationError("Digite um email válido")
         if hasattr(self, 'instance') and self.instance.email == email:
             return email
-        
         if Professor.objects.filter(email=email).exists():
             raise forms.ValidationError("Já existe um professor com este email")
+        
         return email
     
     def clean_especialidade(self):
         especialidade = self.cleaned_data['especialidade']
-        if len(especialidade.len()) < 2:
+        especialidade = especialidade.strip()
+    
+        if len(especialidade) < 2:
             raise forms.ValidationError("Especialidade tem que ter pelo menos 2 caracteres")
-        return especialidade.strip()
+        if len(especialidade) > 50:
+            raise forms.ValidationError("Especialidade deve ter no máximo 50 caracteres")
+
+        return especialidade

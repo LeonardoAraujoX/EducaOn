@@ -1,4 +1,5 @@
 from django.core.exceptions import ObjectDoesNotExist
+from ..forms.professor_form import ProfessorForm
 from ..models import Professor
 
 class ProfessorRepository:
@@ -19,11 +20,20 @@ class ProfessorRepository:
         return Professor.objects.filter(especialidade=especialidade)
 
     def criar(self, nome, email, especialidade):
-        return Professor.objects.create(
-            nome=nome,
-            email=email,
-            especialidade=especialidade
-        )
+        form = ProfessorForm(data={
+            'nome':nome,
+            'email':email,
+            'especialidade':especialidade,
+        })
+        if form.is_valid():
+            professor = form.save()
+            return professor
+        else:
+            errors = " | ".join([
+                f"{field}: {', '.join(errors)}"
+                for field, erros in form.errors.items()
+            ])
+            raise ValueError(errors)
     
     def atualizar(self, id, **dados):
         professor = self.buscar_por_id(id)
