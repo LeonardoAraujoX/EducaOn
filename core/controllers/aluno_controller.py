@@ -36,28 +36,23 @@ def listar_aluno(request, id):
 @csrf_exempt
 def criar_aluno(request):
     if request.method == 'POST':
-        nome = request.POST.get("nome")
-        email = request.POST.get("email")
-        numero = request.POST.get("numero")
-        
-        print(f"📥 Dados recebidos - Nome: {nome}, Email: {email}, Número: {numero}")
-        
-        # Validação
-        if not nome or not email or not numero:
-            return JsonResponse({"erro": "Todos os campos são obrigatórios"}, status=400)
-        
-        aluno = aluno_repository.criar_aluno(nome, email, numero)
-
-        return JsonResponse({
-            "mensagem": "Aluno criado com sucesso!",
-            "aluno": {
-                "id": aluno.id,
-                "nome": aluno.nome,
-                "email": aluno.email,
-                "numero": aluno.numero
-            }
-        }, status=201)
-    return JsonResponse({"erro": "Método não permitido"}, status=405)
+        try:
+            aluno = aluno_repository.criar_aluno(
+                nome = request.POST.get("nome"),
+                email = request.POST.get("email"),
+                numero = request.POST.get("numero")   
+            )
+            return JsonResponse({
+                "mensagem":"✅ Aluno criado com sucesso!",
+                "aluno":{
+                    "id": aluno.id,
+                    "nome": aluno.nome,
+                    "email": aluno.email,
+                    "numero": aluno.numero
+                }
+            }, status=201)
+        except ValueError as e: 
+            return JsonResponse({"erro": "❌ " + str(e)}, status=400)
 
 
 @csrf_exempt
