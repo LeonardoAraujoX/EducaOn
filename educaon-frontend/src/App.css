@@ -1,4 +1,51 @@
-.app {
+/* Centraliza TUDO na tela */
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  text-align: center;
+  padding: 20px;
+}
+
+/* Cabeçalho */
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+/* Título */
+.title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #2d79f3; /* cor azul do projeto */
+}
+
+/* Logo */
+.logo {
+  width: 120px;
+  height: auto;
+}
+
+/* Conteúdo (rotas) */
+.content {
+  width: 100%;
+  max-width: 800px;
+  display: flex;
+  justify-content: center;
+}
+
+
+
+
+
+
+
+/*.app {
   max-width: 800px;
   margin: 0 auto;
   padding: 20px;
@@ -76,4 +123,4 @@ button:hover {
   background: #f8d7da;
   color: #721c24;
   border: 1px solid #f5c6cb;
-}
+}*/
