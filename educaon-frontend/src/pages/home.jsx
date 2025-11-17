@@ -1,6 +1,6 @@
 // home.jsx
 import React from 'react';
-import './home.css'; // Ou podemos usar CSS-in-JS
+import './home.css';
 
 const Home = () => {
   return (
@@ -12,28 +12,27 @@ const Home = () => {
             <div className="logo">EducaOn</div>
             <ul className="nav-links">
               <li><a href="#">Início</a></li>
-              <li><a href="#">Como Funciona</a></li>
-              <li><a href="#">Matérias</a></li>
-              <li><a href="#">Professores</a></li>
-              <li><a href="#" className="btn btn-outline">Entrar</a></li>
+              <li><a href="#">Como Funciona</a></li>             
+              <li><a href="#">Entrar</a></li>
             </ul>
           </nav>
         </div>
       </header>
 
-      {/* Hero Section */}
+      {/* Hero Section - MAIS COMPACTA */}
       <section className="hero">
-        <div className="container">
-          <h1>Aprenda com os melhores professores</h1>
+        <div className="container hero-container">
+          <h1>EducaOn</h1>
+          <h2>Aprenda com os melhores professores</h2>
           <p>Conecte-se com professores qualificados, agende aulas online e aprenda no seu ritmo.</p>
           <div className="hero-btns">
             <a href="#" className="btn btn-primary">Começar Agora</a>
-            <a href="#" className="btn btn-outline" style={{backgroundColor: 'rgba(255,255,255,0.2)', color: 'white', borderColor: 'white'}}>Saiba Mais</a>
+            <a href="#" className="btn btn-primary">Saiba Mais</a>
           </div>
         </div>
       </section>
 
-      {/* Features Section */}
+      {/* Features Section - MAIOR E MAIS COMPLETA */}
       <section className="features">
         <div className="container">
           <div className="section-title">
@@ -60,7 +59,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Login Section */}
+      {/* Login Section - MAIOR */}
       <section className="login-section">
         <div className="container">
           <div className="login-container">
@@ -93,4 +92,3 @@ const Home = () => {
 };
 
 export default Home;
-
