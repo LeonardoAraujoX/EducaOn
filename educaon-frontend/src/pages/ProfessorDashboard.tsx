@@ -11,24 +11,29 @@ interface Professor {
   preco_hora: number;
   minutos_disponiveis: number;
   descricao?: string;
+  ativo: boolean;
+}
+
+interface Aluno {
+  id: number;
+  nome: string;
+  email: string;
+  foto?: string;
+}
+
+interface Servico {
+  id: number;
+  descricao: string;
+  preco: number;
 }
 
 interface Agendamento {
   id: number;
-  aluno: {
-    id: number;
-    nome: string;
-    email: string;
-    foto?: string;
-  };
+  aluno: Aluno;
   data_agendamento: string;
   duracao_minutos: number;
   status: "agendado" | "confirmado" | "cancelado" | "realizado";
-  servico: {
-    id: number;
-    descricao: string;
-    preco: number;
-  };
+  servico: Servico;
 }
 
 export default function ProfessorDashboard() {
@@ -51,53 +56,50 @@ export default function ProfessorDashboard() {
       const professorData = await api.getProfessor(professorId);
       setProfessor(professorData);
 
-      // Buscar agendamentos desse professor
-      const agendamentosData = await api.getAgendamentosPorProfessor(
-        professorId
-      );
-      setAgendamentos(agendamentosData || []);
+      // Buscar agendamentos
+      const response = await api.getAgendamentosPorProfessor(professorId);
+
+      console.log("✅ Resposta completa da API:", response);
+
+      // Extrair agendamentos do objeto de resposta
+      let agendamentosArray: Agendamento[] = [];
+
+      if (
+        response &&
+        response.agendamentos &&
+        Array.isArray(response.agendamentos)
+      ) {
+        agendamentosArray = response.agendamentos;
+      } else if (Array.isArray(response)) {
+        agendamentosArray = response;
+      }
+
+      console.log("✅ Agendamentos extraídos:", agendamentosArray);
+      setAgendamentos(agendamentosArray);
     } catch (err: any) {
       console.error("Erro detalhado:", err);
 
-      // Tratamento de erro correto para Axios
       if (err.response) {
-        // Erro da API (4xx, 5xx)
         setError(
           `Erro ${err.response.status}: ${
             err.response.data?.message || "Erro na requisição"
           }`
         );
       } else if (err.request) {
-        // Erro de rede (sem resposta)
         setError(
           "Erro de conexão. Verifique sua internet e se o servidor está rodando."
         );
       } else {
-        // Outros erros
         setError("Erro inesperado: " + err.message);
       }
+      setAgendamentos([]);
     } finally {
       setLoading(false);
     }
   };
 
-  // Função para debug - remove depois que funcionar
-  const testEndpoints = async () => {
-    console.log("=== TESTANDO ENDPOINTS ===");
-    try {
-      const prof = await api.getProfessor(1);
-      console.log("✅ Professor:", prof);
-
-      const agend = await api.getAgendamentosPorProfessor(1);
-      console.log("✅ Agendamentos:", agend);
-    } catch (error) {
-      console.error("❌ Erro no teste:", error);
-    }
-  };
-
   useEffect(() => {
     fetchProfessorData();
-    testEndpoints(); // Remove esta linha depois que funcionar
   }, []);
 
   const handleLogout = () => {
@@ -129,7 +131,7 @@ export default function ProfessorDashboard() {
       });
 
       // Calcular horário de término
-      const endTime = new Date(date.getTime() + 60 * 60000); // +60 minutos
+      const endTime = new Date(date.getTime() + 60 * 60000);
       const endTimeFormatted = endTime.toLocaleTimeString("pt-BR", {
         hour: "2-digit",
         minute: "2-digit",
@@ -196,12 +198,6 @@ export default function ProfessorDashboard() {
             <button onClick={fetchProfessorData} className="retry-btn">
               🔄 Tentar novamente
             </button>
-            <button
-              onClick={() => console.log("Abrir ferramenta de debug")}
-              className="debug-btn"
-            >
-              🐛 Debug
-            </button>
           </div>
         </div>
       </div>
@@ -249,7 +245,7 @@ export default function ProfessorDashboard() {
           <div className="stat-box">
             <h3>
               {professor
-                ? formatCurrency(Number(professor.preco_hora))
+                ? formatCurrency(Number(professor.preco_hora || 0))
                 : "R$ 0,00"}
             </h3>
             <span>Preço por hora</span>
@@ -308,19 +304,25 @@ export default function ProfessorDashboard() {
                     <div className="class-header">
                       <img
                         src={
-                          agendamento.aluno.foto ||
+                          agendamento.aluno?.foto ||
                           "https://cdn-icons-png.flaticon.com/512/4140/4140037.png"
                         }
                         className="student-avatar"
-                        alt={`Avatar de ${agendamento.aluno.nome}`}
+                        alt={`Avatar de ${agendamento.aluno?.nome || "Aluno"}`}
                         onError={(e) => {
                           (e.target as HTMLImageElement).src =
                             "https://cdn-icons-png.flaticon.com/512/4140/4140037.png";
                         }}
                       />
                       <div className="student-info">
-                        <h3>{agendamento.aluno.nome}</h3>
-                        <span>Aluno • {agendamento.servico.descricao}</span>
+                        <h3>
+                          {agendamento.aluno?.nome || "Nome não disponível"}
+                        </h3>
+                        <span>
+                          Aluno •{" "}
+                          {agendamento.servico?.descricao ||
+                            "Matéria não definida"}
+                        </span>
                       </div>
                       <span
                         className={`status ${getStatusClass(
@@ -334,13 +336,15 @@ export default function ProfessorDashboard() {
                     <div className="class-details">
                       <p>📅 {date}</p>
                       <p>
-                        ⏰ {time} ({agendamento.duracao_minutos} minutos)
+                        ⏰ {time} ({agendamento.duracao_minutos || 60} minutos)
                       </p>
                     </div>
 
                     <div className="class-footer">
                       <span className="price">
-                        {formatCurrency(Number(agendamento.servico.preco))}
+                        {formatCurrency(
+                          Number(agendamento.servico?.preco || 0)
+                        )}
                       </span>
                       {(agendamento.status === "agendado" ||
                         agendamento.status === "confirmado") && (
