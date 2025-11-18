@@ -321,6 +321,13 @@ body {
   font-size: 1.3rem;
 }
 
+.error-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
 .retry-btn {
   background: #3498db;
   color: white;
@@ -329,7 +336,6 @@ body {
   border-radius: 6px;
   cursor: pointer;
   font-size: 1rem;
-  margin-top: 15px;
   transition: background 0.3s ease;
 }
 
@@ -432,6 +438,10 @@ body {
   .status {
     margin-left: 0;
     margin-top: 10px;
+  }
+
+  .error-actions {
+    flex-direction: column;
   }
 }
 
