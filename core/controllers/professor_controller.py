@@ -31,18 +31,26 @@ def buscar_professor(request, id):
 def criar_professor(request):
     if request.method == 'POST':
         try:
+            print("Dados recebidos:", dict(request.POST))  
             professor = repo.criar(
                 nome = request.POST.get("nome"),
                 email = request.POST.get("email"),
-                especialidade = request.POST.get("especialidade")
+                especialidade = request.POST.get("especialidade"),
+                password = request.POST.get("senha"),  
+                foto = request.POST.get("foto"), 
+                preco_hora = request.POST.get("preco_hora", 80.00),
+                minutos_disponiveis = request.POST.get("minutos_disponiveis", 240)
             )
             return JsonResponse({
-                "mensagem":"✅ Aluno criado com sucesso!",
+                "mensagem":"✅ Professor criado com sucesso!",
                 "professor":{
                     "id": professor.id,
                     "nome": professor.nome,
                     "email": professor.email,
-                    "especialidade": professor.especialidade
+                    "especialidade": professor.especialidade,
+                    "foto": professor.foto,  # 👈 Campos novos no response
+                    "preco_hora": float(professor.preco_hora),
+                    "minutos_disponiveis": professor.minutos_disponiveis
                 }
             }, status=201)
         except ValueError as e:

@@ -19,21 +19,20 @@ class ProfessorRepository:
     def buscar_por_especialidade(self, especialidade):
         return Professor.objects.filter(especialidade=especialidade)
 
-    def criar(self, nome, email, especialidade):
-        form = ProfessorForm(data={
-            'nome':nome,
-            'email':email,
-            'especialidade':especialidade,
-        })
-        if form.is_valid():
-            professor = form.save()
+    def criar(self, nome, email, especialidade, password, foto=None, preco_hora=80.00, minutos_disponiveis=240):
+        try:
+            professor = Professor.objects.create_user(
+                nome=nome,
+                email=email,
+                password = password,
+                especialidade = especialidade,
+                foto=foto,
+                preco_hora=preco_hora,
+                minutos_disponiveis=minutos_disponiveis
+            )
             return professor
-        else:
-            errors = " | ".join([
-                f"{field}: {', '.join(errors)}"
-                for field, erros in form.errors.items()
-            ])
-            raise ValueError(errors)
+        except Exception as e:
+            raise ValueError(f"Erro ao criar professor: {str(e)}")
     
     def atualizar(self, id, **dados):
         professor = self.buscar_por_id(id)

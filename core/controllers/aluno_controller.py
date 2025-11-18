@@ -37,10 +37,13 @@ def listar_aluno(request, id):
 def criar_aluno(request):
     if request.method == 'POST':
         try:
+            print("Dados recebidos", dict(request.POST))
             aluno = aluno_repository.criar_aluno(
                 nome = request.POST.get("nome"),
                 email = request.POST.get("email"),
-                numero = request.POST.get("numero")   
+                password = request.POST.get("password"),
+                numero = request.POST.get("numero"),
+                foto = request.POST.get("foto")
             )
             return JsonResponse({
                 "mensagem":"✅ Aluno criado com sucesso!",
@@ -48,10 +51,11 @@ def criar_aluno(request):
                     "id": aluno.id,
                     "nome": aluno.nome,
                     "email": aluno.email,
-                    "numero": aluno.numero
+                    "numero": aluno.numero,
+                    "foto": aluno.foto  
                 }
             }, status=201)
-        except ValueError as e: 
+        except ValueError as e:
             return JsonResponse({"erro": "❌ " + str(e)}, status=400)
 
 
