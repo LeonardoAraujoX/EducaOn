@@ -60,20 +60,23 @@ const Home = () => {
       </section>
 
       {/* Login Section - MAIOR */}
-      <section className="login-section">
-        <div className="container">
-          <div className="login-container">
-            <h2>Entre na sua conta</h2>
-            <div className="login-options">
-              <a href="#" className="btn btn-primary">Entrar como Aluno</a>
-              <a href="#" className="btn btn-outline">Entrar como Professor</a>
-            </div>
-            <div className="signup-link">
-              Não tem uma conta? <a href="#">Criar conta</a>
-            </div>
-          </div>
-        </div>
-      </section>
+   <section className="login-section">
+  <div className="container">
+    <div className="login-container">
+      <h2>EducaOn</h2>
+      <div className="login-options">
+        <a href="#" className="btn btn-primary">Entrar como Aluno</a>
+        
+        <div className="account-divider"></div>
+        
+        <a href="#" className="btn btn-outline">Professor</a>
+      </div>
+      <div className="signup-link">
+        Não tem uma conta? <a href="#">Criar conta</a>
+      </div>
+    </div>
+  </div>
+</section>
 
       {/* Footer */}
       <footer>
