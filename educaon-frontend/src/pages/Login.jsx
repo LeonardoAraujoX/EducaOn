@@ -1,140 +1,121 @@
-import React, { useState } from "react";
-import "./Login.css";
-import axios from "axios";
+import React, {useState} from "react";
+import { useNavigate } from 'react-router-dom';
+import toast, { Toaster } from "react-hot-toast";
+import Navbar from "../components/Navbar";
+import "./Login.css"
+import axios from "axios"
+import { api } from "../services/api";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [userType, setUserType] = useState("professor");
+  const [userType, setUserType] = useState("aluno");
+  const navigate = useNavigate();
 
-  const handleLogin = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    setError("");
+    
 
-    try {
-      const response = await axios.post("http://localhost:8000/auth/login/", {
-        email: email,
-        password: password,
-        user_type: userType,
-      });
+    if (!email.trim() || !password.trim() ) {
+      toast.error("Crendiciais de login não podem estar vazias!");
+      return;
+  }
+  setLoading(true);
 
-      const { access, refresh, user } = response.data;
+  try {
+    const response = await api.login(email, password, userType)
 
+    if (response.data && response.data.access){
+      const { access, refresh, user} = response.data;
       localStorage.setItem("access_token", access);
       localStorage.setItem("refresh_token", refresh);
-      localStorage.setItem("user_type", userType);
-      localStorage.setItem("user_info", JSON.stringify(user));
+      localStorage.setItem("userType", userType);
+      localStorage.setItem("userInfo", JSON.stringify(user));
+      localStorage.setItem("userId", user.id);
 
-      if (userType === "professor") {
-        alert(`Bem-vindo, Professor ${user.name}!`);
-      } else {
-        alert(`Bem-vindo, Aluno ${user.name}!`);
-      }
-    } catch (error) {
-      console.error("Erro no login:", error);
-      if (error.response) {
-        setError(
-          error.response.data.detail ||
-            error.response.data.message ||
-            "Erro ao fazer login"
-        );
-      } else if (error.request) {
-        setError("Servidor indisponível. Tente novamente.");
-      } else {
-        setError("Erro inesperado.");
-      }
-    } finally {
+    } else {
+      toast.error("Crendenciais inválidas!");
       setLoading(false);
+      return;
     }
-  };
 
+    if (userType === "aluno"){
+      navigate("/dashboard-aluno")
+    } else if (userType === "professor") {
+      navigate("/dashboard-professor")
+    }
+  } catch (error) {
+    if (error.response && error.response.data) {
+      toast.error(error.response.data.message || "Erro no login");
+    } else {
+      toast.error("Erro de conexão");
+    }
+  }
+  finally {
+    setLoading(false)
+  }
+
+}
   return (
-    <div className="login-container">
-      <div className="login-card">
-        <div className="logo-section">
-          <h1>TutorConnect</h1>
-          <p className="subtitle">Entre na sua conta</p>
-        </div>
 
-        {error && <div className="error-message">{error}</div>}
-
-        <form onSubmit={handleLogin} className="login-form">
-          <div className="form-group">
-            <label className="form-label">Tipo de Usuário</label>
-            <div className="user-type-selector">
-              <button
-                type="button"
-                className={`type-btn ${userType === "professor" ? "active" : ""}`}
-                onClick={() => setUserType("professor")}
-                disabled={loading}
-              >
-                Professor
-              </button>
-              <button
-                type="button"
-                className={`type-btn ${userType === "aluno" ? "active" : ""}`}
-                onClick={() => setUserType("aluno")}
-                disabled={loading}
-              >
-                Aluno
-              </button>
-            </div>
-          </div>
-
-          <div className="form-group">
-            <label className="form-label">E-mail</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="seu@email.com"
-              required
-              disabled={loading}
-              className="form-input"
-            />
-          </div>
-
-          <div className="form-group">
-            <label className="form-label">Senha</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Sua senha"
-              required
-              disabled={loading}
-              className="form-input"
-            />
-          </div>
-
-          <button 
-            type="submit" 
-            className={`submit-btn ${loading ? 'loading' : ''}`} 
-            disabled={loading}
-          >
-            {loading ? (
-              <>
-                <div className="spinner"></div>
-                Entrando...
-              </>
-            ) : (
-              'Entrar'
-            )}
-          </button>
-        </form>
-
-        <div className="login-footer">
-          <p>
-            Não tem uma conta? <a href="#" className="footer-link">Cadastre-se</a>
-          </p>
-          <a href="#" className="forgot-password">Esqueceu a senha?</a>
-        </div>
+  <div className="login-container">
+    <form onSubmit={handleSubmit} className="login-form">
+      {/* Título */}
+      <h2>Login</h2>
+      
+      {/* Seletor de tipo de usuário */}
+      <div className="user-type-selector">
+        <label>
+          <input 
+            type="radio" 
+            value="aluno" 
+            checked={userType === "aluno"}
+            onChange={(e) => setUserType(e.target.value)}
+          />
+          Aluno
+        </label>
+        <label>
+          <input 
+            type="radio" 
+            value="professor" 
+            checked={userType === "professor"}
+            onChange={(e) => setUserType(e.target.value)}
+          />
+          Professor
+        </label>
       </div>
-    </div>
-  );
-};
+
+      {/* Input de email */}
+      <div className="input-group">
+        <label>Email:</label>
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Seu email"
+        />
+      </div>
+
+      {/* Input de senha */}
+      <div className="input-group">
+        <label>Senha:</label>
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="Sua senha"
+        />
+      </div>
+
+      {/* Botão de submit */}
+      <button type="submit" disabled={loading}>
+        {loading ? "Carregando..." : "Entrar"}
+      </button>
+    </form>
+  </div>
+);
+}
 
 export default Login;

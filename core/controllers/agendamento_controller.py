@@ -95,6 +95,7 @@ def buscar_agendamento(request, id):
 @csrf_exempt
 def criar_agendamento(request):
     if request.method == "POST":
+        print("👉 Dados recebidos:", dict(request.POST))
         professor_id = request.POST.get("professor_id")
         aluno_id = request.POST.get("aluno_id")
         servico_id = request.POST.get("servico_id") 

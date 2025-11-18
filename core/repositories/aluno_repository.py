@@ -17,23 +17,18 @@ class AlunoRepository:
         except Aluno.DoesNotExist:
             return None
 
-    @staticmethod
-    def criar_aluno(nome, email, numero):
-        form = AlunoForm(data={
-            'nome': nome,
-            'email': email,
-            'numero': numero
-        }) 
-
-        if form.is_valid():
-            aluno = form.save()
-            return aluno
-        else:
-            errors = " | ".join([
-                f"{field}: {', '.join(errors)}"
-                for field, erros in form.errors.items()
-            ])
-            raise ValueError(errors)
+    def criar_aluno(self, nome, email, numero, password, foto=None):
+       try:
+           aluno = Aluno.objects.create_user(
+               nome=nome,
+               email=email,
+               password=password,
+               numero=numero,
+               foto=foto
+           )
+           return aluno
+       except Exception as e:
+           raise ValueError(f"Erro ao criar aluno: {str(e)}")
 
     @staticmethod
     def atualizar_aluno(id, nome=None, email=None, numero=None):
