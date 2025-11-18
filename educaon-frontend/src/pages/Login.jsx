@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 import { useNavigate } from 'react-router-dom';
 import toast, { Toaster } from "react-hot-toast";
+import Navbar from "../components/Navbar";
 import "./Login.css"
 import axios from "axios"
 
@@ -61,6 +62,7 @@ const Login = () => {
 
 }
   return (
+
   <div className="login-container">
     <form onSubmit={handleSubmit} className="login-form">
       {/* Título */}
