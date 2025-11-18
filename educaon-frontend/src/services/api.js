@@ -9,6 +9,14 @@ const apiClient = axios.create({
 });
 
 export const api = {
+
+  login: (email, password, userType) => 
+    apiClient.post('/auth/login/',{
+      email,
+      password,
+      userType
+    }).then(res=>res.data),
+
   // 👇 ALUNOS
   getAlunos: () => apiClient.get("/alunos/").then((res) => res.data),
 

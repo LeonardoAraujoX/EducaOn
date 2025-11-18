@@ -4,6 +4,7 @@ import toast, { Toaster } from "react-hot-toast";
 import Navbar from "../components/Navbar";
 import "./Login.css"
 import axios from "axios"
+import { api } from "../services/api";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -24,11 +25,7 @@ const Login = () => {
   setLoading(true);
 
   try {
-    const response = await axios.post("http://localhost:8000/auth/login/", {
-      email: email,
-      password: password,
-      userType: userType
-    })
+    const response = await api.login(email, password, userType)
 
     if (response.data && response.data.access){
       const { access, refresh, user} = response.data;
@@ -36,7 +33,7 @@ const Login = () => {
       localStorage.setItem("refresh_token", refresh);
       localStorage.setItem("userType", userType);
       localStorage.setItem("userInfo", JSON.stringify(user));
-
+      localStorage.setItem("userId", user.id);
 
     } else {
       toast.error("Crendenciais inválidas!");
