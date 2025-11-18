@@ -13,7 +13,7 @@ export default function AppRoutes() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/registrar" element={<Register />} />
-        <Route path="/aluno" element={<Aluno />} />
+        <Route path="/aluno-dashboard" element={<Aluno />} />
         <Route path="/professor-dashboard" element={<ProfessorDashboard />} />
        
       </Routes>
